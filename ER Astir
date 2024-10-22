@@ -1,0 +1,67 @@
+from graphviz import Digraph
+
+# Create a new directed graph
+dot = Digraph(comment='CRM System for Astir Club')
+
+# Define entities and attributes
+entities = {
+    'Client': [
+        'ClientID (PK)', 'Name', 'ContactDetails', 'Type', 'Status', 'Location', 'Industry'
+    ],
+    'B2B Partner': [
+        'PartnerID (PK)', 'Name', 'Type', 'Location', 'ContactDetails', 'ServiceDetails', 'CollaborationHistory'
+    ],
+    'Vendor': [
+        'VendorID (PK)', 'Type', 'Name', 'City', 'ContactDetails', 'Services', 'Pricing', 'Availability'
+    ],
+    'Hotel': [
+        'HotelID (PK)', 'Name', 'City', 'ContactDetails', 'Location', 'Stars', 'Capacity', 'Facilities', 
+        'Type', 'DiningPlan', 'Services', 'Presentation'
+    ],
+    'EventVenue': [
+        'VenueID (PK)', 'Name', 'City', 'ContactDetails', 'Location', 'Capacity', 'Type', 'Facilities', 
+        'Availability', 'Presentation'
+    ],
+    'Project': [
+        'ProjectID (PK)', 'Name', 'ClientID (FK)', 'EventType', 'StartDate', 'EndDate', 'Budget', 'Milestones', 
+        'Status', 'AssignedStaff', 'Documents'
+    ],
+    'Business Development': [
+        'BDID (PK)', 'ContactID (FK)', 'Date', 'Mail', 'Call', 'Category', 'Type', 'ClientStatus', 
+        'Activities', 'Sourcing', 'Notes'
+    ],
+    'Contact': [
+        'ContactID (PK)', 'Name', 'Email', 'Phone', 'City', 'Company', 'Position', 'ContactPerson1', 
+        'ContactPerson2', 'ContactPerson3'
+    ],
+    'Invoice': [
+        'InvoiceID (PK)', 'ProjectID (FK)', 'ClientID (FK)', 'Amount', 'DueDate', 'PaymentStatus', 'PaymentHistory'
+    ]
+}
+
+# Define relationships
+relationships = {
+    'Client': ['Project', 'Invoice', 'Contact'],
+    'B2B Partner': ['Project'],
+    'Vendor': ['Project', 'City'],
+    'Hotel': ['Project', 'City'],
+    'EventVenue': ['Project', 'City'],
+    'Project': ['Client', 'Vendor', 'B2B Partner', 'Hotel', 'EventVenue', 'Invoice'],
+    'Business Development': ['Contact']
+}
+
+# Add entities and their attributes to the graph
+for entity, attributes in entities.items():
+    label = f'{entity}|' + '|'.join(attributes)
+    dot.node(entity, label=label, shape='record')
+
+# Add relationships (edges)
+for source, targets in relationships.items():
+    for target in targets:
+        dot.edge(source, target)
+
+# Render the diagram as a PNG image
+output_path = "/mnt/data/CRM_ER_Diagram_Astir_Club.png"
+dot.render(filename=output_path, format='png', cleanup=False)
+
+output_path
